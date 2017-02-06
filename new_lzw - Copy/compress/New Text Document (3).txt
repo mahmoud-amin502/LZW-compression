@@ -1,0 +1,54 @@
+compress 
+
+
+
+STRING = get input character
+WIDTH  = initial code width
+WHILE there are still input characters DO
+    CHARACTER = get input character
+    IF STRING+CHARACTER is in the string table then
+        STRING = STRING+character
+    ELSE
+        output the code for STRING in code width WIDTH
+        add STRING+CHARACTER to the string table
+        STRING = CHARACTER
+
+        IF next code in table == 2^WIDTH + 1 AND (WIDTH+1) <= MAX_WIDTH
+          WIDTH = WIDTH + 1
+        END
+    END of IF
+END of WHILE
+output the code for STRING
+
+
+
+
+
+
+
+decompress
+
+Read OLD_CODE
+output OLD_CODE
+CHARACTER = OLD_CODE
+WHILE there are still input characters DO
+    IF next code to be inserted to translation table is 2^WIDTH+1
+      increase code width for reader
+    END of IF
+
+    Read NEW_CODE
+    IF NEW_CODE is not in the translation table THEN
+        STRING = get translation of OLD_CODE
+        STRING = STRING+CHARACTER
+    ELSE
+        STRING = get translation of NEW_CODE
+    END of IF
+    output STRING
+    CHARACTER = first character in STRING
+    add OLD_CODE + CHARACTER to the translation table
+    OLD_CODE = NEW_CODE
+END of WHILE
+
+
+
+

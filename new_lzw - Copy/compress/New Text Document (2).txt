@@ -1,0 +1,117 @@
+import java.io.*;
+   import java.util.HashMap;    // to represent dictionary in compress()
+   import java.util.ArrayList;  // to represent dictionary in decompress()
+ 
+ 
+    public class LZWForText {
+        
+   /**  <insert comments describing what this method does>
+   */
+    
+       public void compress(InputStream input, OutputStream output)
+       throws IOException
+      {
+       
+      // for doing bit-oriented writing
+         BitOutputStream bos = new BitOutputStream(output);
+       
+      /* initialize the dictionary to contain an entry for each
+      ** length one string corresponding to an ASCII character
+      */
+       
+         HashMap<String, Integer> hMap = new HashMap<String, Integer>();
+         int i,code;
+             
+         for(i=0; i!=127; i++)
+         {
+            String key = "" + (char)i;
+            Integer value = new Integer(i); 
+           
+            hMap.put(key, value);
+         }
+       
+      /* read the input data from 'input' and
+      ** write its compressed form to 'bos'
+      */
+       
+         int ch;
+         String s = "", tmp = "";
+       
+         while ((ch = input.read()) != -1) 
+         { 
+            tmp = s + (char)ch;
+          
+            if (hMap.containsKey(tmp)) 
+            {
+               s = s + (char)ch; 
+            } 
+            else
+            {
+               code = ((Integer)hMap.get(s)).intValue(); 
+               bos.writeBit(code); hMap.put(tmp, new Integer(i++)); 
+               s = "" + (char)ch; 
+            }
+          
+         }
+       
+         code = ((Integer)hMap.get(s)).intValue();
+         bos.writeBit(code);
+         input.close();
+         bos.close();
+       
+      }
+    
+    
+   /**  <insert comments describing what this method does>
+   */
+       public void decompress(InputStream input, OutputStream output)
+       throws IOException
+      {
+       
+      // for doing bit-oriented reading (as opposed to byte-oriented)
+         BitInputStream bis = new BitInputStream(input);
+       
+      // for doing character-oriented writing (as opposed to byte-oriented)
+         PrintWriter pw = new PrintWriter(output);
+       
+      /* initialize the dictionary to contain an entry for each
+      ** length one string corresponding to an ASCII character
+      */
+       
+         HashMap<String, Integer> hMap = new HashMap<String, Integer>();
+         int i,code;
+         int read;
+         PrintWriter result = new PrintWriter(new FileWriter("result.txt"));
+       
+         for(i=0; i!=256; i++)
+         {
+            String key = "" + (char)i;
+            Integer value = new Integer(i); 
+           
+            hMap.put(key, value);
+         }
+       
+       
+      /* read the input data from 'bis' and
+      ** write its decompressed form to 'pw'
+      */
+       
+         while((read = bis.readBit()) != -1)
+         {
+            System.out.print(read + " ");
+            result.write(read + " ");
+         }
+       
+         result.close();
+           
+      }
+    
+       public static void main()
+      {
+  
+compress(InputStream input, OutputStream output);
+decompress(InputStream input, OutputStream output);
+ 
+      }
+    
+   }
